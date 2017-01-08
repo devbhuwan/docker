@@ -11,7 +11,7 @@ WORKDIR /home/duser
 RUN groupadd --gid 1004 duser && \
     useradd --system --uid 1003 --gid 1004 --home /home/duser --shell /bin/bash duser
 
-ENV SPAGOBI_VERSION= SpagoBIMeta_5.2.0_linux64
+ENV SPAGOBI_VERSION=SpagoBIMeta_5.2.0_linux64
 ENV SPAGOBI_URL=http://download.forge.ow2.org/spagobi/${SPAGOBI_VERSION}_12042016.zip  
 	
 RUN wget "${SPAGOBI_URL}" -O SpagoBI.zip && \
