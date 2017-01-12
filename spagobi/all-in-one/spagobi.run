@@ -1,5 +1,10 @@
 #!/bin/bash
+docker rm spagobi_5_2_0
 
 docker run -d -p 8080:8080 --name "spagobi_5_2_0" devbhuwan/spagobi-all-in-one
+
+sleep 10
+
+docker exec -it spagobi_5_2_0 /bin/sh -c "tail -f /usr/local/spagobi/logs/catalina.out"
 
 # http://containerip:8080/SpagoBI
