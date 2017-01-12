@@ -27,8 +27,10 @@ RUN wget "${TOMCAT_ZIP_URL}" -O tomcat.zip && \
 
 RUN wget "${DASHBUILDER_WAR_URL}" -O dashbuilder.zip && \
 	unzip dashbuilder.zip -d ./${DASHBUILDER_VERSION} && \
-    mv ${DASHBUILDER_VERSION} $DASHBUILDER_TOMCAT_HOME\webapps\dashbuilder && \
+    mv ${DASHBUILDER_VERSION} $DASHBUILDER_TOMCAT_HOME/webapps/dashbuilder && \
     rm dashbuilder.zip
+
+RUN ls -l    
 
 COPY tomcat-users.xml ${DASHBUILDER_TOMCAT_HOME}/conf/
 
@@ -40,7 +42,7 @@ RUN	chmod -R 775 $DASHBUILDER_TOMCAT_HOME
 
 EXPOSE  8080
 
-CMD cd ${DASHBUILDER_TOMCAT_HOME}/bin && startup.sh
+CMD cd ${DASHBUILDER_TOMCAT_HOME}/bin && ./catalina.sh run
 
 
 
