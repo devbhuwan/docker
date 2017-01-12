@@ -1,0 +1,48 @@
+#
+#	JBoss Dashboard Builder 6.2.0 Final
+#
+FROM openjdk:7-jre
+MAINTAINER Bhuwan Prasad Upadhyay <bhuwan.upadhyay49@gmail.com>
+
+RUN groupadd --gid 1004 duser && \
+    useradd --system --uid 1003 --gid 1004 --home /home/duser --shell /bin/bash duser
+
+ENV DASHBUILDER_TOMCAT_HOME /usr/local/tomcat
+ENV DASHBUILDER_VERSION=dashbuilder-6.2.0.Final
+ENV TOMCAT_VERSION=apache-tomee-webprofile-1.7.1
+ENV DASHBUILDER_WAR_URL=http://downloads.jboss.org/dashbuilder/release/6.2.0.Final/dashbuilder-6.2.0.Final-tomcat7.war
+ENV TOMCAT_ZIP_URL=http://archive.apache.org/dist/tomee/tomee-1.7.1/apache-tomee-1.7.1-webprofile.zip
+
+RUN mkdir -p /home/duser
+RUN chown -R duser:duser /home && chown -R duser:duser /usr/local
+RUN chmod -R 777 /home && chmod -R 777 /usr/local
+USER duser
+
+WORKDIR /home/duser
+
+RUN wget "${TOMCAT_ZIP_URL}" -O tomcat.zip && \
+	unzip tomcat.zip && \
+    mv ${TOMCAT_VERSION} $DASHBUILDER_TOMCAT_HOME && \
+    rm tomcat.zip
+
+RUN wget "${DASHBUILDER_WAR_URL}" -O dashbuilder.zip && \
+	unzip dashbuilder.zip -d ./${DASHBUILDER_VERSION} && \
+    mv ${DASHBUILDER_VERSION} $DASHBUILDER_TOMCAT_HOME\webapps\dashbuilder && \
+    rm dashbuilder.zip
+
+COPY tomcat-users.xml ${DASHBUILDER_TOMCAT_HOME}/conf/
+
+USER root
+RUN chown duser:duser ${DASHBUILDER_TOMCAT_HOME}/conf/tomcat-users.xml
+USER duser
+
+RUN	chmod -R 775 $DASHBUILDER_TOMCAT_HOME
+
+EXPOSE  8080
+
+CMD cd ${DASHBUILDER_TOMCAT_HOME}/bin && startup.sh
+
+
+
+
+

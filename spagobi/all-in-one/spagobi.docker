@@ -20,15 +20,13 @@ USER duser
 
 WORKDIR /home/duser
 
-RUN ls -l
-	
 RUN wget "${SPAGOBI_URL}" -O SpagoBI.zip && \
 	unzip SpagoBI.zip && \
     mv ${SPAGOBI_VERSION} $SPAGOBI_HOME && \
     rm SpagoBI.zip
-	
-RUN	chmod +x $SPAGOBI_HOME
-	
+
+RUN	chmod -R 775 $SPAGOBI_HOME
+
 EXPOSE  8080
 
 CMD cd ${SPAGOBI_HOME}/bin && SpagoBIStartup.sh && tail -F ${SPAGOBI_HOME}/logs/catalina.out
