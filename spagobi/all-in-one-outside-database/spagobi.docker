@@ -9,19 +9,17 @@ WORKDIR /home/duser
 
 CMD pkill -9 -f java
 
-USER duser
+RUN whoami
+USER su duser
+RUN whoami
 
-COPY ./entrypoint.sh ./
+ADD ./entrypoint.sh ./
 
 RUN chmod +x ./entrypoint.sh
 
-#RUN chown duser:duser ./entrypoint.sh
-
-#RUN chmod 777 ./entrypoint.sh
-
 EXPOSE  8080
 
-#ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
 
 #CMD cd ${SPAGOBI_HOME}/bin && startup.sh && tail -F ${SPAGOBI_HOME}/logs/catalina.out
 

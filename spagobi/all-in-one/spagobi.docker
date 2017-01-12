@@ -5,31 +5,30 @@
 FROM openjdk:7-jre
 MAINTAINER Bhuwan Prasad Upadhyay <bhuwan.upadhyay49@gmail.com>
 
-ENV SPAGOBI_HOME /usr/local/spagobi
-ENV PATH $SPAGOBI_HOME/bin:$PATH
-WORKDIR /home/duser
-
 RUN groupadd --gid 1004 duser && \
     useradd --system --uid 1003 --gid 1004 --home /home/duser --shell /bin/bash duser
 
+ENV SPAGOBI_HOME /usr/local/spagobi
+ENV PATH $SPAGOBI_HOME/bin:$PATH
 ENV SPAGOBI_VERSION=All-In-One-SpagoBI-5.2.0
 ENV SPAGOBI_URL=http://download.forge.ow2.org/spagobi/${SPAGOBI_VERSION}_11042016.zip
+
+RUN mkdir -p /home/duser
+RUN chown -R duser:duser /home && chown -R duser:duser /usr/local
+RUN chmod -R 777 /home && chmod -R 777 /usr/local
+USER duser
+
+WORKDIR /home/duser
+
+RUN ls -l
 	
 RUN wget "${SPAGOBI_URL}" -O SpagoBI.zip && \
 	unzip SpagoBI.zip && \
     mv ${SPAGOBI_VERSION} $SPAGOBI_HOME && \
     rm SpagoBI.zip
-
-RUN chown -R duser:duser $SPAGOBI_HOME
-
-USER duser
-
-RUN chmod -R 777 $SPAGOBI_HOME
-
+	
+RUN	chmod +x $SPAGOBI_HOME
+	
 EXPOSE  8080
 
 CMD cd ${SPAGOBI_HOME}/bin && SpagoBIStartup.sh && tail -F ${SPAGOBI_HOME}/logs/catalina.out
-
-
-
-
