@@ -33,9 +33,11 @@ RUN wget "${DASHBUILDER_WAR_URL}" -O dashbuilder.zip && \
 RUN ls -l    
 
 COPY tomcat-users.xml ${DASHBUILDER_TOMCAT_HOME}/conf/
+COPY ojdbc6.jar ${DASHBUILDER_TOMCAT_HOME}/webapps/dashbuilder/WEB-INF/lib/
 
 USER root
 RUN chown duser:duser ${DASHBUILDER_TOMCAT_HOME}/conf/tomcat-users.xml
+RUN chown duser:duser ${DASHBUILDER_TOMCAT_HOME}/webapps/dashbuilder/WEB-INF/lib/ojdbc6.jar
 USER duser
 
 RUN	chmod -R 775 $DASHBUILDER_TOMCAT_HOME
