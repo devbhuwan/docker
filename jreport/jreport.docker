@@ -1,0 +1,52 @@
+#
+# BOX: JReport
+#
+FROM openjdk:7-jre
+MAINTAINER Bhuwan Prasad Upadhyay <bhuwan.upadhyay49@gmail.com>
+
+ADD /startup /startup
+ADD /install /install
+
+EXPOSE  8888 8443
+
+#-------------------------------------------------------------------------------
+# Installing jreport
+#-------------------------------------------------------------------------------
+ENV BOX           	jreport
+ENV SUFFIX 	14-up1-b201612211743-linux
+ENV ZIP_FILE        $BOX.zip
+ENV HOME_DIR        /usr/local/$BOX
+ENV PATH            $HOME_DIR/bin:$PATH
+ENV DOWNLOAD        http://www.jinfonet.com/download/V14/UP1/jrsuite-${SUFFIX}.zip
+#-------------------------------------------------------------------------------
+RUN mkdir $HOME_DIR  \
+&& if [ ! -f /install/$ZIP_FILE ]; then  \
+    wget $DOWNLOAD -O /install/$ZIP_FILE ;  \
+   fi  \
+&& unzip -q /install/$ZIP_FILE -d $HOME_DIR  \
+&& rm /install/$ZIP_FILE
+
+#-------------------------------------------------------------------------------
+# Copy env,conf and libs
+#-------------------------------------------------------------------------------
+RUN mv /install/ojdbc6.jar        $HOME_DIR/
+
+WORKDIR $HOME_DIR/
+
+RUN ls -l
+
+RUN chmod -R +x $HOME_DIR
+
+RUN $HOME_DIR/jrserver-${SUFFIX}.bin
+
+RUN ls -l
+
+
+#===============================================================================
+CMD bash /startup/startup.sh duser:startup-$BOX.sh:"/home/duser"
+
+
+
+
+
+

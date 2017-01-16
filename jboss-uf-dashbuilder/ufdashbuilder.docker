@@ -1,0 +1,58 @@
+#
+# BOX: jboss-uf-dashbuilder
+#
+FROM openjdk:7-jre
+MAINTAINER Bhuwan Prasad Upadhyay <bhuwan.upadhyay49@gmail.com>
+
+ADD /startup /startup
+ADD /install /install
+
+EXPOSE  8888 8443
+
+#-------------------------------------------------------------------------------
+# Installing tomcat 7
+#-------------------------------------------------------------------------------
+ENV BOX           	tomcat7
+ENV TAR_FILE        $BOX.tar.gz
+ENV HOME_DIR        /usr/local/$BOX
+ENV PATH            $HOME_DIR/bin:$PATH
+ENV DOWNLOAD        http://www-eu.apache.org/dist/tomcat/tomcat-7/v7.0.73/bin/apache-tomcat-7.0.73.tar.gz 
+ENV CATALINA_HOME   $HOME_DIR
+#-------------------------------------------------------------------------------
+RUN mkdir $HOME_DIR  \
+ && if [ ! -f /install/$TAR_FILE ]; then  \
+     wget $DOWNLOAD -O /install/$TAR_FILE ;  \
+    fi  \
+ && tar -xf /install/$TAR_FILE --strip-components=1 -C $HOME_DIR  \
+ && rm /install/$TAR_FILE
+
+
+#-------------------------------------------------------------------------------
+# Installing jboss-uf-dashbuilder
+#-------------------------------------------------------------------------------
+ENV BOX           	ufdashbuilder
+ENV ZIP_FILE        $BOX.zip
+ENV HOME_DIR        $CATALINA_HOME/webapps/$BOX
+ENV DOWNLOAD        https://origin-repository.jboss.org/nexus/service/local/repositories/snapshots/content/org/dashbuilder/dashbuilder-distros/0.4.0-SNAPSHOT/dashbuilder-distros-0.4.0-20160418.201535-276-tomcat7.war
+#-------------------------------------------------------------------------------
+RUN mkdir $HOME_DIR  \
+&& if [ ! -f /install/$ZIP_FILE ]; then  \
+    wget $DOWNLOAD -O /install/$ZIP_FILE ;  \
+   fi  \
+&& unzip -q /install/$ZIP_FILE -d $HOME_DIR  \
+&& rm /install/$ZIP_FILE
+
+#-------------------------------------------------------------------------------
+# Copy env,conf and libs
+#-------------------------------------------------------------------------------
+RUN mv /install/tomcat-users.xml  $CATALINA_HOME/conf/  \
+ && mv /install/ojdbc6.jar        $HOME_DIR/WEB-INF/lib/ \
+ && mv /install/javax.security.jacc-api-1.5.jar        $HOME_DIR/WEB-INF/lib/
+
+#===============================================================================
+CMD bash /startup/startup.sh duser:startup-$BOX.sh:"$CATALINA_HOME /home/duser"
+
+
+
+
+
