@@ -1,0 +1,66 @@
+#
+# BOX: Eureka
+#
+FROM openjdk:8-jdk
+MAINTAINER Bhuwan Prasad Upadhyay <bhuwan.upadhyay49@gmail.com>
+
+ADD /startup /startup
+ADD /install /install
+
+EXPOSE  8888 8887 8889
+
+#-------------------------------------------------------------------------------
+# Installing Eureka
+#-------------------------------------------------------------------------------
+ENV BOX           	jreport
+ENV SUFFIX 			    14-up1-b201612211743-linux
+ENV ZIP_FILE        $BOX.zip
+ENV HOME_DIR        /usr/local/$BOX
+ENV PATH            $HOME_DIR/bin:$PATH
+ENV DOWNLOAD        http://www.jinfonet.com/download/V14/UP1/jrsuite-${SUFFIX}.zip
+#-------------------------------------------------------------------------------
+RUN mkdir $HOME_DIR  \
+&& if [ ! -f /install/$ZIP_FILE ]; then  \
+    wget $DOWNLOAD -O /install/$ZIP_FILE ;  \
+   fi  \
+&& unzip -q /install/$ZIP_FILE -d $HOME_DIR  \
+&& rm -rf /install/$ZIP_FILE
+
+#-------------------------------------------------------------------------------
+# Copy env,conf and libs
+#-------------------------------------------------------------------------------
+RUN mv /install/ojdbc6.jar        $HOME_DIR/ \
+    && mv /install/SilentInstall  $HOME_DIR/
+
+RUN chown -R root:root $HOME_DIR
+RUN chmod -R 777 $HOME_DIR
+
+#-------------------------------------------------------------------------------
+# JServer Silent Installation
+# http://www.jinfonet.com/kbase/server14/userguide/index.htm#t=HTML%2Finstall%2Finstall_silent.htm
+#-------------------------------------------------------------------------------
+RUN $HOME_DIR/jrserver-${SUFFIX}.bin -i silent -f $HOME_DIR/SilentInstall/ServerInstall_typical.properties
+
+#-------------------------------------------------------------------------------
+# JDesigner Silent Installation
+# http://www.jinfonet.com/kbase/designer14/userguide/index.htm#t=HTML%2Finstall%2Finstall_silent.htm
+#-------------------------------------------------------------------------------
+RUN mkdir /home/temp && $HOME_DIR/jrdesigner-${SUFFIX}.bin -i silent -f $HOME_DIR/SilentInstall/DesignerInstall.properties
+
+#========CLEAN UP==================
+RUN rm -rf $HOME_DIR/jrserver-${SUFFIX}.bin $HOME_DIR/jrdesigner-${SUFFIX}.bin
+
+#========SET ENV===================
+ENV JREPORT_SERVER    $HOME_DIR/Server
+ENV JREPORT_DESIGNER  $HOME_DIR/Designer
+
+#========JDesigner GUI===================
+RUN apt-get update && apt-get install -y wget && \
+		apt-get update && apt-get install -y libgtk2.0-0 libcanberra-gtk-module libxext-dev libxrender-dev libxtst-dev && \
+		apt-get update && apt-get install -y software-properties-common && \
+		apt-get clean && \
+  	rm -rf /var/lib/apt/lists/* && \
+  	rm -rf /tmp/*
+
+#===============================================================================
+CMD bash /startup/startup.sh root:startup-$BOX.sh

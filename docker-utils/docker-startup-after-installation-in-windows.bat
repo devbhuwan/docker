@@ -17,3 +17,12 @@ sudo mount -t vboxsf -o uid=1000,gid=50 docker-scripts $DOCKERSCRIPTS
 ::/mnt/sda1/var/lib/boot2docker
 ::/mnt/sda1/var/lib/docker
 ::------------------------------------------------------------------------------------------------
+
+::------------------------------------------------------------------------------------------------
+::  Using Oracle VM (https://docs.docker.com/machine/drivers/virtualbox/)
+::------------------------------------------------------------------------------------------------
+
+::------------------------------------------------------------------------------------------------
+::  Using hyper-v (https://docs.docker.com/machine/drivers/hyper-v/)
+::------------------------------------------------------------------------------------------------
+docker-machine create --hyperv-disk-size 102400 --hyperv-virtual-switch "Primary Virtual Switch" --driver hyperv default
