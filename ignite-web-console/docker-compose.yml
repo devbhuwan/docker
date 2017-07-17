@@ -1,0 +1,10 @@
+version: '2'
+services:
+  ignite-web-console:
+    image: apacheignite/web-console-standalone:latest
+    restart: always
+    ports:
+      - 18000:80
+      - 13001:3001
+    volumes:
+      - ~/tmp/ignite-web-console/mongodb:/var/lib/mongodb

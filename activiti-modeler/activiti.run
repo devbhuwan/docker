@@ -1,0 +1,7 @@
+#!/bin/bash
+docker stop activiti-modeler-6-0-0
+docker rm activiti-modeler-6-0-0
+docker run -d -p 8080:8080 --name "activiti-modeler-6-0-0" devbhuwan/activiti-modeler
+sleep 10
+docker exec -it activiti-modeler-6-0-0 bash
+#http://containerip:8080/dashbuilder
