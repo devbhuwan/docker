@@ -1,2 +1,4 @@
 *.dbox
 *.war
+*.iml
+**/.idea/
