@@ -1,0 +1,10 @@
+mango:
+  image: mongo
+formio:
+  build: .
+  links:
+    - mango
+  environment:
+    - MANGO_CONNECTION_URL=mongodb://mango:27017/formioapp
+  ports:
+    - 3001
