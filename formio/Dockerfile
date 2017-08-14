@@ -8,5 +8,5 @@ RUN unzip /tmp/${ZIP_FILE} -d formio
 WORKDIR formio/formio-master
 RUN npm install
 COPY default.json config/
-RUN npm start
+ADD launch.sh /launch.sh
 ENTRYPOINT ["/launch.sh"]

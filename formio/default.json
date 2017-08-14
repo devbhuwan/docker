@@ -5,8 +5,8 @@
   "protocol": "http",
   "domain": "http://localhost:3001",
   "basePath": "",
-  "mongo": "mongodb://mango:27017/formioapp",
-  "mongoSecret": "secret01",
+  "mongo": "mongodb://mango:27017/admin",
+  "mongoSecret": "",
   "reservedForms": [
     "submission",
     "exists",
