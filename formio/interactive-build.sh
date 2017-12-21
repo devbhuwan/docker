@@ -20,7 +20,7 @@ do
             ;;
         "Push Image")
             echo "you chose 'Push Image'"
-            docker push xcloudschool/formio
+            docker push devbhuwan/formio
             ;;
         "Docker Login")
             echo "you chose 'Docker Login'"
